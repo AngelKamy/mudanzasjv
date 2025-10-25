@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Mudanzas JV - Servicio profesional de mudanzas locales y foráneas en Ciudad de México. 15+ años de experiencia. Cotización gratuita." />
+    <title>Mudanzas JV - Servicio de Mudanzas en Ciudad de México</title>
+    <link rel="icon" href="./assets/logo/Logo_JV-removebg-preview.png" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="./css/mystyle.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+    <a href="https://wa.me/5511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-bubble"
+        id="whatsapp-bubble" aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+525511425796">55-1142-5796</a>
+                </span>
+                <span>
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:fletesymudanzasjv1@gmail.com">fletesymudanzasjv1@gmail.com</a>
+                </span>
+            </div>
+            <div>
+                <a href="https://wa.me/5511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
+                    <i class="fab fa-whatsapp"></i> Cotiza por WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <a href="#inicio" class="logo" style="text-decoration: none">
+                <div class="logo-icon">
+                    <img src="./assets/logo/Logo_JV-removebg-preview.png" alt="Logo Mudanzas JV" />
+                </div>
+                <div class="logo-text">Mudanzas <span>JV</span></div>
+            </a>
+
+            <button class="mobile-menu-btn" aria-label="Abrir menú de navegación">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <nav>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#servicios">Servicios</a></li>
+                    <li><a href="#proceso">Cómo Funciona</a></li>
+                    <li><a href="#nosotros">Nosotros</a></li>
+                    <li><a href="#cobertura">Cobertura</a></li>
+                    <li><a href="#inicio" class="cta-button">Cotizar Gratis</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="inicio">
+        <div class="container">
+            <div class="hero-content">
+                <h1>
+                    Movemos lo que te importa, con
+                    <span id="animated-article">el</span>
+                    <span id="animated-word">cuidado</span>
+                    que mereces
+                </h1>
+                <p>
+                    Servicio profesional de mudanzas locales y foráneas en Ciudad de
+                    México. Rápido, seguro y confiable.
+                </p>
+
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>15+ años de experiencia</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Personal capacitado</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Seguro incluido</span>
+                    </div>
+                    <div class="hero-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Precios transparentes</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quote-form">
+                <h3>Cotización Gratuita</h3>
+                <p class="subtitle">
+                    Completa el formulario y recibe tu cotización en minutos
+                </p>
+
+                <form id="quoteForm" novalidate>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="form_nombre" class="required">Nombre</label>
+                            <input id="form_nombre" type="text" placeholder="Ej: María" required aria-required="true" />
+                            <span class="error-message">Por favor ingresa tu nombre</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_apellido" class="required">Apellido</label>
+                            <input id="form_apellido" type="text" placeholder="Ej: González" required
+                                aria-required="true" />
+                            <span class="error-message">Por favor ingresa tu apellido</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="form_telefono" class="required">Teléfono</label>
+                            <input id="form_telefono" type="tel" placeholder="55 1234 5678" required pattern="[0-9]{10}"
+                                aria-required="true" />
+                            <span class="error-message">Ingresa un teléfono válido (10 dígitos)</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="form_email" class="required">Correo Electrónico</label>
+                            <input id="form_email" type="email" placeholder="tu@email.com" required
+                                aria-required="true" />
+                            <span class="error-message">Ingresa un email válido</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="form_fecha" class="required">Fecha de servicio</label>
+                        <input id="form_fecha" type="date" required aria-required="true" />
+                        <span class="error-message">Selecciona una fecha</span>
+                    </div>
+
+                    <fieldset>
+                        <legend>Datos de Origen</legend>
+                        <div class="form-group">
+                            <label for="form_origen_dir" class="required">Dirección de Carga</label>
+                            <input id="form_origen_dir" type="text" placeholder="Calle, Número, Colonia, C.P." required
+                                aria-required="true" />
+                            <span class="error-message">Ingresa la dirección de origen</span>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="form_origen_piso" class="required">Piso / Nivel</label>
+                                <input id="form_origen_piso" type="text" placeholder="Ej: Piso 3, PB, Sótano 2" required
+                                    aria-required="true" />
+                                <span class="error-message">Indica el piso</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">¿Elevador?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="origen_elevador" value="si" required
+                                            aria-required="true" />
+                                        <span>Sí</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="origen_elevador" value="no" />
+                                        <span>No</span>
+                                    </label>
+                                </div>
+                                <span class="error-message">Selecciona una opción</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Datos de Destino</legend>
+                        <div class="form-group">
+                            <label for="form_destino_dir" class="required">Dirección de Descarga</label>
+                            <input id="form_destino_dir" type="text" placeholder="Calle, Número, Colonia, C.P." required
+                                aria-required="true" />
+                            <span class="error-message">Ingresa la dirección de destino</span>
+                        </div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label for="form_destino_piso" class="required">Piso / Nivel</label>
+                                <input id="form_destino_piso" type="text" placeholder="Ej: Piso 8, Casa" required
+                                    aria-required="true" />
+                                <span class="error-message">Indica el piso</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="required">¿Elevador?</label>
+                                <div class="radio-group">
+                                    <label class="radio-option">
+                                        <input type="radio" name="destino_elevador" value="si" required
+                                            aria-required="true" />
+                                        <span>Sí</span>
+                                    </label>
+                                    <label class="radio-option">
+                                        <input type="radio" name="destino_elevador" value="no" />
+                                        <span>No</span>
+                                    </label>
+                                </div>
+                                <span class="error-message">Selecciona una opción</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label for="form_lista">Lista de cosas a transportar (opcional)</label>
+                        <textarea id="form_lista" rows="4"
+                            placeholder="Ej: 1 refrigerador, 1 sala de 3 piezas, 1 comedor de 6 sillas, 10 cajas medianas..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-paper-plane"></i> Solicitar Cotización
+                    </button>
+                    <p class="form-note">
+                        <i class="fas fa-lock"></i> Tus datos están protegidos
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <div class="trust-bar">
+        <div class="container">
+            <div class="trust-item">
+                <i class="fas fa-award"></i>
+                <h4>15+ Años de Experiencia</h4>
+                <p>Líderes en mudanzas en CDMX</p>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-users-cog"></i>
+                <h4>Personal Capacitado</h4>
+                <p>Equipo profesional certificado</p>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Seguro Incluido</h4>
+                <p>Protección total de tus bienes</p>
+            </div>
+            <div class="trust-item">
+                <i class="fas fa-hand-holding-usd"></i>
+                <h4>Precios Justos</h4>
+                <p>Sin costos ocultos</p>
+            </div>
+        </div>
+    </div>
+
+    <section id="servicios">
+        <div class="container">
+            <h2 class="section-title">Nuestros Servicios</h2>
+            <p class="section-subtitle">
+                Soluciones completas de mudanza adaptadas a tus necesidades
+            </p>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/residential.png" alt="residencial">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Mudanzas Residenciales</h3>
+                        <p>
+                            Trasladamos tu hogar completo con el máximo cuidado. Desde
+                            departamentos hasta casas grandes, cada objeto es tratado con
+                            profesionalismo y dedicación.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/office.png" alt="office">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Mudanzas de Oficina</h3>
+                        <p>
+                            Minimizamos el tiempo de inactividad de tu negocio. Movemos
+                            equipos, archivos y mobiliario de manera eficiente y organizada.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/packaking.png" alt="packing">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Empaque Profesional</h3>
+                        <p>
+                            Servicio especializado de empaque con materiales de alta
+                            calidad. Protegemos objetos frágiles, vajillas, electrónicos y
+                            obras de arte.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/foraneo.png" alt="foraneo">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Mudanzas Foráneas</h3>
+                        <p>
+                            Llevamos tus pertenencias a cualquier parte de México con total
+                            seguridad y puntualidad. Rastreo en tiempo real disponible.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/especiales.png" alt="maniobras">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Maniobras especiales</h3>
+                        <p>
+                            Movemos lo que más valoras —desde un piano hasta ese mueble lleno de historia— con la máxima
+                            delicadeza y precisión.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-card-image">
+                        <img src="./assets/img/especiales.png" alt="maniobras">
+                    </div>
+                    <div class="service-card-content">
+                        <h3>Volados profesionales</h3>
+                        <p>
+                            Contamos con el equipo y la experiencia para realizar volados seguros y precisos. 
+                            Transportamos objetos de gran tamaño por fachadas o espacios difíciles, garantizando protección total y cumplimiento de normas de seguridad.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="proceso">
+        <div class="container">
+            <h2 class="section-title">¿Cómo Funciona?</h2>
+            <p class="section-subtitle">
+                Un proceso simple y transparente en 4 pasos
+            </p>
+
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                        <div class="step-number">1</div>
+                    </div>
+                    <h4>Cotiza Gratis</h4>
+                    <p>
+                        Completa el formulario y recibe una cotización detallada sin
+                        compromiso. Precios claros y justos.
+                    </p>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-icon">
+                        <i class="fas fa-calendar-check"></i>
+                        <div class="step-number">2</div>
+                    </div>
+                    <h4>Planeamos Juntos</h4>
+                    <p>
+                        Agendamos la fecha que mejor te convenga y coordinamos todos los
+                        detalles de tu mudanza.
+                    </p>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-icon">
+                        <i class="fas fa-truck-loading"></i>
+                        <div class="step-number">3</div>
+                    </div>
+                    <h4>Empacamos y Movemos</h4>
+                    <p>
+                        Nuestro equipo llega puntual, empaca tus pertenencias con cuidado
+                        y las transporta de forma segura.
+                    </p>
+                </div>
+
+                <div class="process-step">
+                    <div class="step-icon">
+                        <i class="fas fa-house-user"></i>
+                        <div class="step-number">4</div>
+                    </div>
+                    <h4>Entrega Completa</h4>
+                    <p>
+                        Desempacamos y acomodamos todo en su lugar. Tu satisfacción es
+                        nuestra prioridad.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="nosotros">
+        <div class="container">
+            <h2 class="section-title">Sobre Nosotros</h2>
+            <p class="section-subtitle">
+                Conoce a la familia detrás de Mudanzas JV
+            </p>
+
+            <div class="about-content">
+                <div class="about-text">
+                    <h3>Somos Mudanzas JV</h3>
+                    <p>
+                        Una empresa familiar con más de 15 años de experiencia brindando
+                        servicios de mudanza de calidad en la Ciudad de México y toda la
+                        República Mexicana.
+                    </p>
+
+                    <p>
+                        Entendemos que una mudanza representa un momento importante en tu
+                        vida. Ya sea el inicio de una nueva etapa, la expansión de tu
+                        negocio o simplemente un cambio necesario, estamos aquí para hacer
+                        de este proceso una experiencia tranquila y sin preocupaciones.
+                    </p>
+
+                    <p>
+                        Nuestro equipo está conformado por profesionales capacitados que
+                        tratan cada mudanza con el mismo cuidado que darían a sus propias
+                        pertenencias. La confianza de nuestros clientes es nuestro mayor
+                        logro.
+                    </p>
+
+                    <div class="mission-box">
+                        <h4>Nuestra Misión</h4>
+                        <p>
+                            Hacer de tu mudanza una experiencia tranquila y libre de estrés,
+                            tratando cada uno de tus objetos con el respeto y cuidado que
+                            merece, porque sabemos que no solo movemos cosas, movemos
+                            historias y recuerdos.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="./assets/img/our_team.png" alt="Equipo de Mudanzas JV trabajando profesionalmente" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cobertura">
+        <div class="container">
+            <h2 class="section-title">Nuestra Cobertura</h2>
+            <p class="section-subtitle">
+                Servicio en toda la Ciudad de México y mudanzas foráneas a nivel
+                nacional
+            </p>
+
+            <div id="map"></div>
+
+            <div class="coverage-info">
+                <h3>Destinos Principales</h3>
+                <div class="coverage-badges">
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Ciudad de México</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Estado de México</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Guadalajara</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Monterrey</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Puebla</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Querétaro</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Cancún</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Mérida</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Veracruz</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> León</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Tijuana</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Morelia</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Aguascalientes</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> San Luis Potosí</span>
+                    <span class="badge"><i class="fas fa-map-marker-alt"></i> Y toda la República</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonios">
+        <div class="container">
+            <h2 class="section-title">Testimonios</h2>
+            <p class="section-subtitle">
+                Lo que nuestros clientes dicen sobre nosotros
+            </p>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Excelente servicio. Llegaron puntuales, fueron muy cuidadosos con
+                        mis muebles y no se rompióolutamente nada. El equipo fue muy
+                        profesional y amable en todo momento. Definitivamente los
+                        recomiendo."
+                    </p>
+                    <p class="testimonial-author">María González</p>
+                    <p class="testimonial-location">Polanco, CDMX</p>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Contraté a Mudanzas JV para trasladar mi oficina y superaron
+                        todas mis expectativas. Terminaron en el tiempo acordado y todo
+                        llegó en perfecto estado. Muy profesionales."
+                    </p>
+                    <p class="testimonial-author">Roberto Martínez</p>
+                    <p class="testimonial-location">Santa Fe, CDMX</p>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">
+                        "Muy buen precio y excelente atención al cliente. Me ayudaron
+                        incluso a organizar y acomodar las cajas en mi nuevo departamento.
+                        Sin duda los volvería a contratar."
+                    </p>
+                    <p class="testimonial-author">Laura Sánchez</p>
+                    <p class="testimonial-location">Coyoacán, CDMX</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="final-cta" id="contacto">
+        <div class="container">
+            <h2>¿Listo para tu próxima mudanza?</h2>
+            <p>Obtén tu cotización gratuita y sin compromiso hoy mismo</p>
+            <a href="#inicio" class="cta-button-large">
+                <i class="fas fa-file-invoice"></i> Solicitar Cotización Gratis
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Mudanzas JV</h3>
+                <p>
+                    Empresa líder en servicios de mudanza en la Ciudad de México.
+                    Movemos lo que te importa con el cuidado que mereces.
+                </p>
+                <div class="social-icons">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5511425796" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Ciudad de México, México</li>
+                    <li><i class="fas fa-phone"></i> <a href="tel:+525511425796">55-1142-5796</a></li>
+                    <li><i class="fas fa-envelope"></i> <a
+                            href="mailto:fletesymudanzasjv1@gmail.com">fletesymudanzasjv1@gmail.com</a></li>
+                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/5511425796">WhatsApp: 55-1142-5796</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Servicios</h3>
+                <ul>
+                    <li><a href="#servicios">Mudanzas Residenciales</a></li>
+                    <li><a href="#servicios">Mudanzas de Oficina</a></li>
+                    <li><a href="#servicios">Empaque y Embalaje</a></li>
+                    <li><a href="#servicios">Mudanzas Foráneas</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Empresa</h3>
+                <ul>
+                    <li><a href="#nosotros">Sobre Nosotros</a></li>
+                    <li><a href="#cobertura">Áreas de Cobertura</a></li>
+                    <li><a href="#testimonios">Testimonios</a></li>
+                    <li><a href="#inicio">Cotizar</a></li>
+                    <li><a href="#">Aviso de Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                &copy; 2025 Mudanzas JV. Todos los derechos reservados. | Diseñado por The Fixers
+                <i class="fas fa-heart" style="color: var(--secondary-red)"></i> para
+                servir mejor
+            </p>
+        </div>
+    </footer>
+
+    <script src="./js/myscript.js"></script>
+</body>
+
+</html>
