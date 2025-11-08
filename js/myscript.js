@@ -4,84 +4,94 @@
 
 const quoteForm = document.getElementById("quoteForm");
 
-// Función para validar un campo individual
+// Función para validar un campo individual (VERSIÓN CORREGIDA)
 function validateField(field) {
   const formGroup = field.closest(".form-group");
-  
   if (!formGroup) return true;
-  
-  let isValid = true;
 
-  // Validación para campos de texto requeridos
-  if (field.hasAttribute("required") && field.value.trim() === "") {
+  let isValid = true; // Asumimos que es válido
+  const value = field.value.trim();
+
+  // 1. Revisión de campos REQUERIDOS y VACÍOS
+  if (field.hasAttribute("required") && value === "") {
     isValid = false;
   }
+  // 2. Si NO está vacío, revisamos formatos específicos
+  else if (value !== "") {
 
-  // Validación para email
-  if (field.type === "email" && field.value !== "") {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    isValid = emailRegex.test(field.value);
+    if (field.type === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      isValid = emailRegex.test(value);
+    }
+    else if (field.type === "tel") {
+      const digits = value.replace(/\D/g, "");
+      isValid = (digits.length === 10);
+    }
+    else if (field.type === "date") {
+      const selectedDate = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      isValid = selectedDate >= today;
+    }
+    // (Otros campos de solo texto no requieren validación de formato)
   }
 
-  // Validación para teléfono (basada en el formateo automático)
-  if (field.type === "tel" && field.value !== "") {
-    const phoneRegex = /^[0-9\s]{12}$/; // 10 dígitos + 2 espacios
-    isValid = phoneRegex.test(field.value);
-  }
-
-  // Validación para fecha
-  if (field.type === "date" && field.value !== "") {
-    const selectedDate = new Date(field.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    // Permite seleccionar la fecha de hoy
-    isValid = selectedDate >= today;
-  }
-
-  // Validación para radio buttons
+  // 3. Revisión especial para RADIO buttons (estos no usan 'value')
   if (field.type === "radio") {
     const radioGroup = formGroup.querySelectorAll(`input[name="${field.name}"]`);
     isValid = Array.from(radioGroup).some(radio => radio.checked);
   }
 
-  // Aplicar clases de error/éxito
+  // 4. Aplicar o quitar la clase de error/éxito
   if (isValid) {
     formGroup.classList.remove("error");
+    // Solo añade 'success' si el campo no está vacío (o es un radio)
+    if (value !== "" || field.type === "radio") {
+      formGroup.classList.add("success");
+    } else {
+      // Si está vacío (y no es requerido), no debe ser verde
+      formGroup.classList.remove("success");
+    }
   } else {
+    formGroup.classList.remove("success"); // Quita éxito si hay error
     formGroup.classList.add("error");
   }
 
   return isValid;
 }
 
+
 if (quoteForm) {
   // Validación en tiempo real
   quoteForm.querySelectorAll("input, select, textarea").forEach(field => {
-    // Validar al perder el foco
-    field.addEventListener("blur", function() {
+    // 1. Validar al PERDER EL FOCO (blur) - para todos los campos
+    field.addEventListener("blur", function () {
       if (this.value !== "" || this.hasAttribute("required")) {
         validateField(this);
       }
     });
 
-    // Remover error al empezar a escribir
-    field.addEventListener("input", function() {
-      const formGroup = this.closest(".form-group");
-      if (formGroup && formGroup.classList.contains("error")) {
-        formGroup.classList.remove("error");
+    // 2. Remover error/éxito al empezar a escribir (para campos que NO son el teléfono)
+    field.addEventListener("input", function () {
+      if (field.id !== 'form_telefono') { // <-- No ejecutar esto para el teléfono
+        const formGroup = this.closest(".form-group");
+        if (formGroup) {
+          formGroup.classList.remove("error");
+          formGroup.classList.remove("success");
+        }
       }
     });
   });
 
   // Validación especial para radio buttons
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
-    radio.addEventListener("change", function() {
+    radio.addEventListener("change", function () {
       validateField(this);
     });
   });
 
-  // Manejo del envío del formulario
-  quoteForm.addEventListener("submit", function(e) {
+  // Manejo del envío del formulario (¡VERSIÓN CORREGIDA CON FETCH!)
+  quoteForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     let isFormValid = true;
@@ -100,7 +110,7 @@ if (quoteForm) {
     const radioGroups = ["origen_elevador", "destino_elevador"];
     radioGroups.forEach(groupName => {
       const radios = form.querySelectorAll(`input[name="${groupName}"]`);
-      if(radios.length > 0) {
+      if (radios.length > 0) {
         const isChecked = Array.from(radios).some(radio => radio.checked);
         if (!isChecked) {
           isFormValid = false;
@@ -125,26 +135,70 @@ if (quoteForm) {
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-    // Simular envío (aquí pondrías tu lógica real de envío)
-    setTimeout(() => {
-      // Mostrar mensaje de éxito
-      alert(
-        "¡Gracias por tu solicitud! Nos pondremos en contacto contigo en menos de 30 minutos."
-      );
+    // --- ¡INICIO DEL CÓDIGO DE ENVÍO A GOOGLE! ---
 
-      // Resetear formulario
-      form.reset();
-      
-      // Remover todas las clases de error
-      form.querySelectorAll(".form-group.error").forEach(group => {
-        group.classList.remove("error");
+    // 1. Construir el objeto de datos manualmente
+    const data = {
+      nombre: document.getElementById('form_nombre').value,
+      apellido: document.getElementById('form_apellido').value,
+      telefono: document.getElementById('form_telefono').value,
+      email: document.getElementById('form_email').value,
+      fecha: document.getElementById('form_fecha').value,
+      origen_dir: document.getElementById('form_origen_dir').value,
+      origen_piso: document.getElementById('form_origen_piso').value,
+      origen_elevador: form.querySelector('input[name="origen_elevador"]:checked').value,
+      destino_dir: document.getElementById('form_destino_dir').value,
+      destino_piso: document.getElementById('form_destino_piso').value,
+      destino_elevador: form.querySelector('input[name="destino_elevador"]:checked').value,
+      lista: document.getElementById('form_lista').value
+    };
+
+    // 2. ¡¡¡IMPORTANTE!!! Pega tu URL de Apps Script aquí
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwkkYpETabda6jK0-6uWz2Jkqj4vS81S7Ocmtj_FkrjcGxsujtj3JNQY8K7JHIVj0GQEQ/exec';
+
+    // 3. Enviar los datos usando fetch
+    fetch(scriptURL, {
+      method: 'POST',
+      mode: 'cors', // CORS es necesario para que JS lea la respuesta
+      cache: 'no-cache',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8', // Apps Script prefiere texto plano
+      },
+      body: JSON.stringify(data) // Convertir el objeto de datos a un string JSON
+    })
+      .then(response => response.json()) // Espera una respuesta JSON del script
+      .then(res => {
+
+        if (res.result === "success") {
+          // ¡Éxito!
+          alert("¡Gracias por tu solicitud! Hemos recibido tu confirmación por correo.");
+          form.reset();
+          form.querySelectorAll(".form-group.error").forEach(group => {
+            group.classList.remove("error");
+          });
+
+          // Limpia los bordes verdes de éxito al resetear
+          form.querySelectorAll(".form-group.success").forEach(group => {
+            group.classList.remove("success");
+          });
+
+        } else {
+          // Error reportado por el script de Google
+          console.error('Error del script:', res.message);
+          alert("Hubo un error al enviar tu solicitud. (Error de script). Por favor, inténtalo de nuevo.");
+        }
+      })
+      .catch(error => {
+        // Error de red o del 'fetch'
+        console.error('Error de Fetch:', error);
+        alert("Hubo un error de conexión. Por favor, revisa tu internet e inténtalo de nuevo.");
+      })
+      .finally(() => {
+        // Restaurar el botón en cualquier caso
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
       });
-
-      // Restaurar botón
-      submitButton.disabled = false;
-      submitButton.innerHTML = originalButtonText;
-
-    }, 1500);
+    // --- ¡FIN DEL CÓDIGO DE ENVÍO A GOOGLE! ---
   });
 } // Fin de if(quoteForm)
 
@@ -153,10 +207,10 @@ if (quoteForm) {
 // ===================================
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener("click", function(e) {
+  anchor.addEventListener("click", function (e) {
     e.preventDefault();
     let targetId = this.getAttribute("href");
-    
+
     // Si el href es solo "#", apunta a la parte superior
     let target = (targetId === "#") ? document.documentElement : document.querySelector(targetId);
 
@@ -165,9 +219,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       if (targetId === "#inicio" || targetId === "#cotizar") {
         target = document.querySelector("#inicio");
       }
-      
+
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-      
+
       // Cerrar menú móvil si está abierto
       document.body.classList.remove("nav-open");
     }
@@ -197,19 +251,19 @@ if (document.getElementById("map")) {
   }).addTo(map);
 
   // Activar zoom con Ctrl + Scroll
-  document.addEventListener("keydown", function(e) {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Control" || e.metaKey) {
       map.scrollWheelZoom.enable();
     }
   });
 
-  document.addEventListener("keyup", function(e) {
+  document.addEventListener("keyup", function (e) {
     if (e.key === "Control" || e.metaKey) {
       map.scrollWheelZoom.disable();
     }
   });
 
-  window.addEventListener("blur", function() {
+  window.addEventListener("blur", function () {
     map.scrollWheelZoom.disable();
   });
 
@@ -219,7 +273,7 @@ if (document.getElementById("map")) {
       position: "topleft",
     },
 
-    onAdd: function(map) {
+    onAdd: function (map) {
       const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
       const button = L.DomUtil.create("a", "leaflet-control-reset", container);
 
@@ -229,7 +283,7 @@ if (document.getElementById("map")) {
       button.title = "Volver a la vista inicial";
 
       L.DomEvent.disableClickPropagation(button);
-      L.DomEvent.on(button, "click", function(e) {
+      L.DomEvent.on(button, "click", function (e) {
         e.preventDefault();
         map.setView(defaultView.coords, defaultView.zoom);
       });
@@ -281,21 +335,21 @@ const nav = document.querySelector("nav");
 const body = document.querySelector("body");
 
 if (mobileMenuBtn && nav && body) {
-  mobileMenuBtn.addEventListener("click", function() {
+  mobileMenuBtn.addEventListener("click", function () {
     body.classList.toggle("nav-open");
   });
 
   // Cerrar menú al hacer clic fuera
-  document.addEventListener("click", function(e) {
-    if (body.classList.contains("nav-open") && 
-        !nav.contains(e.target) && 
-        !mobileMenuBtn.contains(e.target)) {
+  document.addEventListener("click", function (e) {
+    if (body.classList.contains("nav-open") &&
+      !nav.contains(e.target) &&
+      !mobileMenuBtn.contains(e.target)) {
       body.classList.remove("nav-open");
     }
   });
 
   // Cerrar menú con tecla Escape
-  document.addEventListener("keydown", function(e) {
+  document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && body.classList.contains("nav-open")) {
       body.classList.remove("nav-open");
     }
@@ -310,7 +364,7 @@ const whatsappBubble = document.getElementById("whatsapp-bubble");
 if (whatsappBubble) {
   const scrollThreshold = 100;
 
-  window.addEventListener("scroll", function() {
+  window.addEventListener("scroll", function () {
     if (window.scrollY > scrollThreshold) {
       whatsappBubble.classList.add("show");
     } else {
@@ -329,7 +383,7 @@ const observerOptions = {
   rootMargin: "0px 0px -50px 0px"
 };
 
-const observer = new IntersectionObserver(function(entries, observerInstance) {
+const observer = new IntersectionObserver(function (entries, observerInstance) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       // 1. Añade la clase 'is-visible' que está en el CSS
@@ -354,13 +408,13 @@ document.querySelectorAll(
 
 // Mejorar navegación por teclado
 document.querySelectorAll('a, button, input, select, textarea').forEach(element => {
-  element.addEventListener('focus', function() {
+  element.addEventListener('focus', function () {
     // Usamos el estilo 'outline' que es el estándar para accesibilidad
     this.style.outline = '3px solid var(--primary-yellow)';
     this.style.outlineOffset = '2px';
   });
-  
-  element.addEventListener('blur', function() {
+
+  element.addEventListener('blur', function () {
     this.style.outline = '';
     this.style.outlineOffset = '';
   });
@@ -374,7 +428,7 @@ function announceToScreenReader(message) {
   announcement.classList.add('sr-only');
   announcement.textContent = message;
   document.body.appendChild(announcement);
-  
+
   setTimeout(() => {
     document.body.removeChild(announcement);
   }, 1000);
@@ -383,28 +437,27 @@ function announceToScreenReader(message) {
 // Añadir estilos para elementos solo para lectores de pantalla
 const style = document.createElement('style');
 style.textContent = `
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
 `;
 document.head.appendChild(style);
 
-
 // ===================================
-// CÓDIGO AL CARGAR EL DOM (FUSIONADO)
+// CÓDIGO AL CARGAR EL DOM (FUSIONADO Y CORREGIDO)
 // (Calendario, Formato Teléfono, Animación H1)
 // ===================================
 
 document.addEventListener("DOMContentLoaded", function () {
-  
+
   // --- LÓGICA DEL CALENDARIO ---
   const fechaInput = document.getElementById("form_fecha");
   if (fechaInput) {
@@ -421,27 +474,28 @@ document.addEventListener("DOMContentLoaded", function () {
     fechaInput.setAttribute("min", fechaMinima);
   }
 
-  // --- LÓGICA DE FORMATEAR TELÉFONO ---
+  // --- LÓGICA DE FORMATEAR TELÉFONO (CORREGIDA) ---
   const telefonoInput = document.getElementById("form_telefono");
   if (telefonoInput) {
     telefonoInput.addEventListener("input", function (e) {
-      // Remover caracteres no numéricos
-      let value = e.target.value.replace(/\D/g, "");
+      // 1. Obtener solo dígitos y limitar a 10
+      const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
 
-      // Limitar a 10 dígitos
-      if (value.length > 10) {
-        value = value.slice(0, 10);
+      // 2. Aplicar el formato XX XXXX XXXX
+      let formattedValue = digits;
+      if (digits.length > 6) {
+        // Formato: 55 3669 6176
+        formattedValue = `${digits.slice(0, 2)} ${digits.slice(2, 6)} ${digits.slice(6)}`;
+      } else if (digits.length > 2) {
+        // Formato: 55 3669
+        formattedValue = `${digits.slice(0, 2)} ${digits.slice(2)}`;
       }
 
-      // Formatear como XX XXXX XXXX
-      if (value.length > 2) {
-        value = value.slice(0, 2) + " " + value.slice(2);
-      }
-      if (value.length > 7) {
-        value = value.slice(0, 7) + " " + value.slice(7);
-      }
+      // 3. Asignar el valor formateado de nuevo al campo
+      e.target.value = formattedValue;
 
-      e.target.value = value;
+      // 4. ¡¡LÍNEA NUEVA!! VALIDAR EN TIEMPO REAL
+      validateField(e.target);
     });
   }
 

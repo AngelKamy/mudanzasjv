@@ -319,6 +319,12 @@ nav a:hover {
   background: var(--medium-gray);
 }
 
+/* Regla para el borde verde (JS) */
+.form-group.success input,
+.form-group.success select,
+.form-group.success textarea {
+  border-color: var(--success-green);
+}
 /* ---
    FIN DE CORRECCIÓN DE FORMULARIO
 --- */
@@ -374,7 +380,7 @@ nav a:hover {
   box-shadow: 0 0 0 3px rgba(255, 210, 10, 0.1);
 }
 
-/* Estados de validación */
+/* Estados de validación (HTML5 para email, date, etc.) */
 .form-group input:invalid:not(:placeholder-shown),
 .form-group select:invalid,
 .form-group textarea:invalid:not(:placeholder-shown) {
@@ -387,7 +393,7 @@ nav a:hover {
   border-color: var(--success-green);
 }
 
-/* Mensaje de error */
+/* Mensaje de error (JS) */
 .error-message {
   color: var(--error-red);
   font-size: 12px;
@@ -399,6 +405,7 @@ nav a:hover {
   display: block;
 }
 
+/* Regla para el borde rojo (JS) */
 .form-group.error input,
 .form-group.error select,
 .form-group.error textarea {
@@ -540,9 +547,14 @@ section {
   position: relative;
 }
 .service-card-image img {
-  width: 100%;      /* Make the image fill the container width */
-  height: 100%;     /* Make the image fill the container height */
+  width: 100%;    /* Make the image fill the container width */
+  height: 100%;   /* Make the image fill the container height */
   object-fit: cover; /* Crop the image to fit without stretching */
+}
+
+.service-card-image i {
+  font-size: 70px;
+  color: var(--dark-gray);
 }
 
 .service-card-content {
