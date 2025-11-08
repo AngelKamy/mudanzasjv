@@ -154,7 +154,7 @@ if (quoteForm) {
     };
 
     // 2. ¡¡¡IMPORTANTE!!! Pega tu URL de Apps Script aquí
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbweo6xC3s9tw964F-BRNC7rLhwquzlFW2CIwvp8KDGf10IwWhgRLqUxmdeAvAy6kpXp/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzuerQr3RIdlNPg4bUsI6hRcuoGN54mSRlMGpmcLwGZhGKa0y_40ymtHPRwPsDRVFiAHw/exec';
 
     // 3. Enviar los datos usando fetch
     fetch(scriptURL, {
