@@ -140,7 +140,6 @@ if (quoteForm) {
     // 1. Construir el objeto de datos manualmente
     const data = {
       nombre: document.getElementById('form_nombre').value,
-      apellido: document.getElementById('form_apellido').value,
       telefono: document.getElementById('form_telefono').value,
       email: document.getElementById('form_email').value,
       fecha: document.getElementById('form_fecha').value,
@@ -154,7 +153,7 @@ if (quoteForm) {
     };
 
     // 2. ¡¡¡IMPORTANTE!!! Pega tu URL de Apps Script aquí
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzuerQr3RIdlNPg4bUsI6hRcuoGN54mSRlMGpmcLwGZhGKa0y_40ymtHPRwPsDRVFiAHw/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz6OthcQjsmxHlxRVuD3jObzeo9ukytMa-2Y3s-bmqCuADjvl9a5aIz_Skz7FC6d3qB3g/exec';
 
     // 3. Enviar los datos usando fetch
     fetch(scriptURL, {
@@ -317,7 +316,9 @@ if (document.getElementById("map")) {
     { name: "Cancún", coords: [21.1619, -86.8515] },
     { name: "Mérida", coords: [20.9674, -89.5926] },
     { name: "León", coords: [21.1218, -101.6826] },
-    { name: "Tijuana", coords: [32.5149, -117.0382] },
+    { name: "Veracruz", coords: [19.202413611910277, -96.13403048799478] },
+    { name: "Acapulco", coords: [16.89531675240192, -99.83953484715727] },
+    { name: "Toluca", coords: [19.2826, -99.6557] },
   ];
 
   cities.forEach(city => {
