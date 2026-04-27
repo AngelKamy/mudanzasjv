@@ -5,7 +5,6 @@
 function showToast({ type = "success", title = "", message = "", duration = 5000 } = {}) {
   const container = document.getElementById("toast-container");
   if (!container) {
-    // Fallback si por alguna razón no existe el contenedor
     alert((title ? title + "\n" : "") + message);
     return;
   }
@@ -51,7 +50,6 @@ function showToast({ type = "success", title = "", message = "", duration = 5000
 
 const quoteForm = document.getElementById("quoteForm");
 
-// Función para validar un campo individual
 function validateField(field) {
   const formGroup = field.closest(".form-group");
   if (!formGroup) return true;
@@ -59,13 +57,10 @@ function validateField(field) {
   let isValid = true; 
   const value = field.value.trim();
 
-  // 1. Revisión de campos REQUERIDOS y VACÍOS
   if (field.hasAttribute("required") && value === "") {
     isValid = false;
   }
-  // 2. Si NO está vacío, revisamos formatos específicos
   else if (value !== "") {
-
     if (field.type === "email") {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       isValid = emailRegex.test(value);
@@ -82,13 +77,11 @@ function validateField(field) {
     }
   }
 
-  // 3. Revisión especial para RADIO buttons
   if (field.type === "radio") {
     const radioGroup = formGroup.querySelectorAll(`input[name="${field.name}"]`);
     isValid = Array.from(radioGroup).some(radio => radio.checked);
   }
 
-  // 4. Aplicar o quitar la clase de error/éxito
   if (isValid) {
     formGroup.classList.remove("error");
     if (value !== "" || field.type === "radio") {
@@ -104,9 +97,7 @@ function validateField(field) {
   return isValid;
 }
 
-
 if (quoteForm) {
-  // Validación en tiempo real
   quoteForm.querySelectorAll("input, select, textarea").forEach(field => {
     field.addEventListener("blur", function () {
       if (this.value !== "" || this.hasAttribute("required")) {
@@ -139,42 +130,29 @@ if (quoteForm) {
     const submitButton = form.querySelector(".submit-button");
     const originalButtonText = submitButton.innerHTML;
 
-    // --- ANTI-SPAM: honeypot ---
+    // --- ANTI-SPAM ---
     const honeypot = document.getElementById("hp_website");
     if (honeypot && honeypot.value.trim() !== "") {
-      console.warn("Honeypot activado — envío bloqueado silenciosamente");
-      showToast({
-        type: "success",
-        title: "¡Solicitud enviada!",
-        message: "Te contactaremos pronto."
-      });
+      showToast({ type: "success", title: "¡Solicitud enviada!", message: "Te contactaremos pronto." });
       form.reset();
       return;
     }
 
-    // --- ANTI-SPAM: tiempo mínimo ---
     const tsField = document.getElementById("hp_ts");
     const startTime = parseInt((tsField && tsField.value) || "0", 10);
     const elapsed = startTime > 0 ? Date.now() - startTime : 99999;
     if (startTime > 0 && elapsed < 3000) {
-      console.warn("Envío demasiado rápido — bloqueado");
-      showToast({
-        type: "success",
-        title: "¡Solicitud enviada!",
-        message: "Te contactaremos pronto."
-      });
+      showToast({ type: "success", title: "¡Solicitud enviada!", message: "Te contactaremos pronto." });
       form.reset();
       return;
     }
 
-    // Validar todos los campos
     form.querySelectorAll("input[required], select[required], textarea[required]").forEach(field => {
       if (!validateField(field)) {
         isFormValid = false;
       }
     });
 
-    // Validar grupos de radio buttons
     const radioGroups = ["origen_elevador", "destino_elevador"];
     radioGroups.forEach(groupName => {
       const radios = form.querySelectorAll(`input[name="${groupName}"]`);
@@ -201,7 +179,6 @@ if (quoteForm) {
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-    // 1. Construir el objeto de datos
     const data = {
       nombre: document.getElementById('form_nombre').value,
       telefono: document.getElementById('form_telefono').value,
@@ -218,47 +195,53 @@ if (quoteForm) {
       hp_elapsed: elapsed
     };
 
-    // 2. Nueva URL proporcionada
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzIVlTkcGoSuiBGzNj9Z1TZW7nFEPHxUqgu8InKHZ_40SPKVbiLoPci7G-aqHk7GWLcBQ/exec';
+    // TU URL ACTUALIZADA
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyCX6XGzxdVpxsj4fheKFTqA7rFngmFxESftgOOZAQQDemqeniOXiIdTo5ptKg9jSnVkw/exec';
 
-    // 3. Envío con configuración anti-CORS estricta
+    // CONFIGURACIÓN ESTRICTA ANTI-CORS
     fetch(scriptURL, {
       method: 'POST',
-      redirect: 'follow', // IMPORTANTE: Obliga al navegador a seguir la redirección
+      redirect: 'follow', 
       headers: {
-        "Content-Type": "text/plain;charset=utf-8" // IMPORTANTE: Evita bloqueo
+        "Content-Type": "text/plain;charset=utf-8" 
       },
       body: JSON.stringify(data)
     })
       .then(response => {
-        if (!response.ok) {
-           throw new Error("Respuesta no válida del servidor");
-        }
-        return response.json();
+        return response.text().then(text => {
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status + ": " + text);
+          }
+          return text;
+        });
       })
-      .then(res => {
-        if (res.result === "success") {
-          showToast({
-            type: "success",
-            title: "¡Solicitud enviada!",
-            message: "Hemos recibido tu cotización. Te contactaremos a la brevedad por correo o teléfono.",
-            duration: 7000
-          });
-          form.reset();
-          if (tsField) tsField.value = Date.now();
-          
-          form.querySelectorAll(".form-group.error, .form-group.success").forEach(group => {
-            group.classList.remove("error", "success");
-          });
-
-        } else {
-          console.error('Error del script:', res.message);
-          showToast({
-            type: "error",
-            title: "No pudimos procesar tu solicitud",
-            message: res.message || "Inténtalo de nuevo en unos momentos o contáctanos por WhatsApp.",
-            duration: 7000
-          });
+      .then(text => {
+        try {
+          const res = JSON.parse(text);
+          if (res.result === "success") {
+            showToast({
+              type: "success",
+              title: "¡Solicitud enviada!",
+              message: "Hemos recibido tu cotización. Te contactaremos a la brevedad por correo o teléfono.",
+              duration: 7000
+            });
+            form.reset();
+            if (tsField) tsField.value = Date.now();
+            form.querySelectorAll(".form-group.error, .form-group.success").forEach(group => {
+              group.classList.remove("error", "success");
+            });
+          } else {
+            console.error('Error lógico:', res.message);
+            showToast({
+              type: "error",
+              title: "No pudimos procesar tu solicitud",
+              message: res.message || "Inténtalo de nuevo en unos momentos.",
+              duration: 7000
+            });
+          }
+        } catch (e) {
+          console.error("Respuesta cruda no-JSON:", text);
+          throw new Error("El servidor no devolvió JSON válido.");
         }
       })
       .catch(error => {
@@ -335,44 +318,29 @@ function loadStylesheet(href) {
 }
 
 function initMap() {
-  const defaultView = {
-    coords: [19.4326, -99.1332],
-    zoom: 6,
-  };
+  const defaultView = { coords: [19.4326, -99.1332], zoom: 6 };
 
-  const map = L.map("map", {
-    scrollWheelZoom: false,
-  }).setView(defaultView.coords, defaultView.zoom);
+  const map = L.map("map", { scrollWheelZoom: false }).setView(defaultView.coords, defaultView.zoom);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors",
   }).addTo(map);
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Control" || e.metaKey) {
-      map.scrollWheelZoom.enable();
-    }
+    if (e.key === "Control" || e.metaKey) { map.scrollWheelZoom.enable(); }
   });
 
   document.addEventListener("keyup", function (e) {
-    if (e.key === "Control" || e.metaKey) {
-      map.scrollWheelZoom.disable();
-    }
+    if (e.key === "Control" || e.metaKey) { map.scrollWheelZoom.disable(); }
   });
 
-  window.addEventListener("blur", function () {
-    map.scrollWheelZoom.disable();
-  });
+  window.addEventListener("blur", function () { map.scrollWheelZoom.disable(); });
 
   const ResetViewControl = L.Control.extend({
-    options: {
-      position: "topleft",
-    },
-
+    options: { position: "topleft" },
     onAdd: function (map) {
       const container = L.DomUtil.create("div", "leaflet-bar leaflet-control");
       const button = L.DomUtil.create("a", "leaflet-control-reset", container);
-
       button.innerHTML = '<i class="fas fa-crosshairs"></i>';
       button.href = "#";
       button.role = "button";
@@ -383,7 +351,6 @@ function initMap() {
         e.preventDefault();
         map.setView(defaultView.coords, defaultView.zoom);
       });
-
       return container;
     },
   });
@@ -391,15 +358,10 @@ function initMap() {
   map.addControl(new ResetViewControl());
 
   const cdmxMarker = L.marker([19.4326, -99.1332]).addTo(map);
-  cdmxMarker
-    .bindPopup("<b>Mudanzas JV</b><br>Ciudad de México, México")
-    .openPopup();
+  cdmxMarker.bindPopup("<b>Mudanzas JV</b><br>Ciudad de México, México").openPopup();
 
-  const coverageCircle = L.circle([19.4326, -99.1332], {
-    color: "#FFD20A",
-    fillColor: "#FFD20A",
-    fillOpacity: 0.1,
-    radius: 300000,
+  L.circle([19.4326, -99.1332], {
+    color: "#FFD20A", fillColor: "#FFD20A", fillOpacity: 0.1, radius: 300000,
   }).addTo(map);
 
   const cities = [
@@ -425,11 +387,7 @@ function loadLeafletAndInit() {
   Promise.all([
     loadStylesheet("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"),
     loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
-  ])
-    .then(() => initMap())
-    .catch(err => {
-      console.error("Error cargando Leaflet:", err);
-    });
+  ]).then(() => initMap()).catch(err => console.error("Error cargando Leaflet:", err));
 }
 
 const mapElement = document.getElementById("map");
@@ -442,7 +400,6 @@ if (mapElement) {
       }
     });
   }, { rootMargin: "200px" });
-
   mapObserver.observe(mapElement);
 } 
 
@@ -460,9 +417,7 @@ if (mobileMenuBtn && nav && body) {
   });
 
   document.addEventListener("click", function (e) {
-    if (body.classList.contains("nav-open") &&
-      !nav.contains(e.target) &&
-      !mobileMenuBtn.contains(e.target)) {
+    if (body.classList.contains("nav-open") && !nav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
       body.classList.remove("nav-open");
     }
   });
@@ -481,7 +436,6 @@ if (mobileMenuBtn && nav && body) {
 const whatsappBubble = document.getElementById("whatsapp-bubble");
 if (whatsappBubble) {
   const scrollThreshold = 100;
-
   window.addEventListener("scroll", function () {
     if (window.scrollY > scrollThreshold) {
       whatsappBubble.classList.add("show");
@@ -495,10 +449,7 @@ if (whatsappBubble) {
 // ANIMACIONES AL HACER SCROLL
 // ===================================
 
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: "0px 0px -50px 0px"
-};
+const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
 
 const observer = new IntersectionObserver(function (entries, observerInstance) {
   entries.forEach(entry => {
@@ -509,12 +460,9 @@ const observer = new IntersectionObserver(function (entries, observerInstance) {
   });
 }, observerOptions);
 
-document.querySelectorAll(
-  ".service-card, .process-step, .testimonial-card, .trust-item"
-).forEach(el => {
+document.querySelectorAll(".service-card, .process-step, .testimonial-card, .trust-item").forEach(el => {
   observer.observe(el);
 });
-
 
 // ===================================
 // MEJORAS DE ACCESIBILIDAD
@@ -532,33 +480,8 @@ document.querySelectorAll('a, button, input, select, textarea').forEach(element 
   });
 });
 
-function announceToScreenReader(message) {
-  const announcement = document.createElement('div');
-  announcement.setAttribute('role', 'status');
-  announcement.setAttribute('aria-live', 'polite');
-  announcement.classList.add('sr-only');
-  announcement.textContent = message;
-  document.body.appendChild(announcement);
-
-  setTimeout(() => {
-    document.body.removeChild(announcement);
-  }, 1000);
-}
-
 const style = document.createElement('style');
-style.textContent = `
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-`;
+style.textContent = `.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }`;
 document.head.appendChild(style);
 
 // ===================================
@@ -566,11 +489,8 @@ document.head.appendChild(style);
 // ===================================
 
 document.addEventListener("DOMContentLoaded", function () {
-
   const tsField = document.getElementById("hp_ts");
-  if (tsField) {
-    tsField.value = Date.now();
-  }
+  if (tsField) { tsField.value = Date.now(); }
 
   const fechaInput = document.getElementById("form_fecha");
   if (fechaInput) {
@@ -582,8 +502,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (mes < 10) mes = "0" + mes;
     if (dia < 10) dia = "0" + dia;
 
-    const fechaMinima = `${anio}-${mes}-${dia}`;
-    fechaInput.setAttribute("min", fechaMinima);
+    fechaInput.setAttribute("min", `${anio}-${mes}-${dia}`);
   }
 
   const telefonoInput = document.getElementById("form_telefono");
@@ -615,23 +534,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (articleSpan && wordSpan) {
     let currentIndex = 0;
-
-    function changeWord() {
+    setInterval(() => {
       articleSpan.classList.add("is-changing");
       wordSpan.classList.add("is-changing");
 
       setTimeout(() => {
         currentIndex = (currentIndex + 1) % wordData.length;
-        const nextWord = wordData[currentIndex];
-
-        articleSpan.textContent = nextWord.article;
-        wordSpan.textContent = nextWord.word;
+        articleSpan.textContent = wordData[currentIndex].article;
+        wordSpan.textContent = wordData[currentIndex].word;
 
         articleSpan.classList.remove("is-changing");
         wordSpan.classList.remove("is-changing");
       }, 400); 
-    }
-
-    setInterval(changeWord, 3000); 
+    }, 3000); 
   }
 });
