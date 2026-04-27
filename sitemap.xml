@@ -8,7 +8,7 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- Anclas a secciones importantes (algunos motores las indexan como páginas separadas) -->
+  <!-- Anclas a secciones importantes -->
   <url>
     <loc>https://mudanzasjv.com/#servicios</loc>
     <changefreq>monthly</changefreq>
