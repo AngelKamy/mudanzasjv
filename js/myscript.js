@@ -219,7 +219,7 @@ if (quoteForm) {
     };
 
     // 2. Nueva URL proporcionada
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwHGp7DxuOLcUVjkmuitnpjh9CGbByNDIa29CKuraXTJQY5zYaWLtKXf-B5MieMUpSh5w/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw_P3pV0EPR5LzI28WKRb58CqHcrtwjVlE_AnBZveg8I1PSCUDAzcC297QUqTi7bgKcag/exec';
 
     // 3. Envío con configuración anti-CORS estricta
     fetch(scriptURL, {
