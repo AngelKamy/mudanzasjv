@@ -1,15 +1,62 @@
 // ===================================
+// SISTEMA DE TOAST (reemplaza alert)
+// ===================================
+
+function showToast({ type = "success", title = "", message = "", duration = 5000 } = {}) {
+  const container = document.getElementById("toast-container");
+  if (!container) {
+    // Fallback si por alguna razón no existe el contenedor
+    alert((title ? title + "\n" : "") + message);
+    return;
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "toast " + type;
+  toast.setAttribute("role", type === "error" ? "alert" : "status");
+
+  const iconClass = type === "success"
+    ? "fas fa-check-circle"
+    : type === "error"
+      ? "fas fa-exclamation-circle"
+      : "fas fa-info-circle";
+
+  toast.innerHTML =
+    '<i class="' + iconClass + ' toast-icon" aria-hidden="true"></i>' +
+    '<div class="toast-content">' +
+      (title ? '<strong>' + title + '</strong>' : '') +
+      '<span>' + message + '</span>' +
+    '</div>' +
+    '<button type="button" class="toast-close" aria-label="Cerrar notificación">' +
+      '<i class="fas fa-times" aria-hidden="true"></i>' +
+    '</button>';
+
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+
+  const dismiss = () => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  };
+
+  toast.querySelector(".toast-close").addEventListener("click", dismiss);
+
+  if (duration > 0) {
+    setTimeout(dismiss, duration);
+  }
+}
+
+// ===================================
 // VALIDACIÓN Y ENVÍO DEL FORMULARIO
 // ===================================
 
 const quoteForm = document.getElementById("quoteForm");
 
-// Función para validar un campo individual (VERSIÓN CORREGIDA)
+// Función para validar un campo individual
 function validateField(field) {
   const formGroup = field.closest(".form-group");
   if (!formGroup) return true;
 
-  let isValid = true; // Asumimos que es válido
+  let isValid = true; 
   const value = field.value.trim();
 
   // 1. Revisión de campos REQUERIDOS y VACÍOS
@@ -33,10 +80,9 @@ function validateField(field) {
       today.setHours(0, 0, 0, 0);
       isValid = selectedDate >= today;
     }
-    // (Otros campos de solo texto no requieren validación de formato)
   }
 
-  // 3. Revisión especial para RADIO buttons (estos no usan 'value')
+  // 3. Revisión especial para RADIO buttons
   if (field.type === "radio") {
     const radioGroup = formGroup.querySelectorAll(`input[name="${field.name}"]`);
     isValid = Array.from(radioGroup).some(radio => radio.checked);
@@ -45,15 +91,13 @@ function validateField(field) {
   // 4. Aplicar o quitar la clase de error/éxito
   if (isValid) {
     formGroup.classList.remove("error");
-    // Solo añade 'success' si el campo no está vacío (o es un radio)
     if (value !== "" || field.type === "radio") {
       formGroup.classList.add("success");
     } else {
-      // Si está vacío (y no es requerido), no debe ser verde
       formGroup.classList.remove("success");
     }
   } else {
-    formGroup.classList.remove("success"); // Quita éxito si hay error
+    formGroup.classList.remove("success"); 
     formGroup.classList.add("error");
   }
 
@@ -64,16 +108,14 @@ function validateField(field) {
 if (quoteForm) {
   // Validación en tiempo real
   quoteForm.querySelectorAll("input, select, textarea").forEach(field => {
-    // 1. Validar al PERDER EL FOCO (blur) - para todos los campos
     field.addEventListener("blur", function () {
       if (this.value !== "" || this.hasAttribute("required")) {
         validateField(this);
       }
     });
 
-    // 2. Remover error/éxito al empezar a escribir (para campos que NO son el teléfono)
     field.addEventListener("input", function () {
-      if (field.id !== 'form_telefono') { // <-- No ejecutar esto para el teléfono
+      if (field.id !== 'form_telefono') { 
         const formGroup = this.closest(".form-group");
         if (formGroup) {
           formGroup.classList.remove("error");
@@ -83,14 +125,12 @@ if (quoteForm) {
     });
   });
 
-  // Validación especial para radio buttons
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
     radio.addEventListener("change", function () {
       validateField(this);
     });
   });
 
-  // Manejo del envío del formulario (¡VERSIÓN CORREGIDA CON FETCH!)
   quoteForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -98,6 +138,34 @@ if (quoteForm) {
     const form = this;
     const submitButton = form.querySelector(".submit-button");
     const originalButtonText = submitButton.innerHTML;
+
+    // --- ANTI-SPAM: honeypot ---
+    const honeypot = document.getElementById("hp_website");
+    if (honeypot && honeypot.value.trim() !== "") {
+      console.warn("Honeypot activado — envío bloqueado silenciosamente");
+      showToast({
+        type: "success",
+        title: "¡Solicitud enviada!",
+        message: "Te contactaremos pronto."
+      });
+      form.reset();
+      return;
+    }
+
+    // --- ANTI-SPAM: tiempo mínimo ---
+    const tsField = document.getElementById("hp_ts");
+    const startTime = parseInt((tsField && tsField.value) || "0", 10);
+    const elapsed = startTime > 0 ? Date.now() - startTime : 99999;
+    if (startTime > 0 && elapsed < 3000) {
+      console.warn("Envío demasiado rápido — bloqueado");
+      showToast({
+        type: "success",
+        title: "¡Solicitud enviada!",
+        message: "Te contactaremos pronto."
+      });
+      form.reset();
+      return;
+    }
 
     // Validar todos los campos
     form.querySelectorAll("input[required], select[required], textarea[required]").forEach(field => {
@@ -122,7 +190,6 @@ if (quoteForm) {
       }
     });
 
-    // Si hay errores, hacer scroll al primer error
     if (!isFormValid) {
       const firstError = form.querySelector(".form-group.error");
       if (firstError) {
@@ -131,13 +198,10 @@ if (quoteForm) {
       return;
     }
 
-    // Deshabilitar botón y mostrar estado de carga
     submitButton.disabled = true;
     submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-    // --- ¡INICIO DEL CÓDIGO DE ENVÍO A GOOGLE! ---
-
-    // 1. Construir el objeto de datos manualmente
+    // 1. Construir el objeto de datos
     const data = {
       nombre: document.getElementById('form_nombre').value,
       telefono: document.getElementById('form_telefono').value,
@@ -149,57 +213,69 @@ if (quoteForm) {
       destino_dir: document.getElementById('form_destino_dir').value,
       destino_piso: document.getElementById('form_destino_piso').value,
       destino_elevador: form.querySelector('input[name="destino_elevador"]:checked').value,
-      lista: document.getElementById('form_lista').value
+      lista: document.getElementById('form_lista').value,
+      hp_website: honeypot ? honeypot.value : "",
+      hp_elapsed: elapsed
     };
 
-    // 2. ¡¡¡IMPORTANTE!!! Pega tu URL de Apps Script aquí
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbz6OthcQjsmxHlxRVuD3jObzeo9ukytMa-2Y3s-bmqCuADjvl9a5aIz_Skz7FC6d3qB3g/exec';
+    // 2. Nueva URL proporcionada
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwgzJ21MFBQgaHlwGWiTwTSJ2zqBdesSn7hNOV-kAc2fqtZe6sDze5xxYCy9zdJJQoqaA/exec';
 
-    // 3. Enviar los datos usando fetch
+    // 3. Envío con configuración anti-CORS estricta
     fetch(scriptURL, {
       method: 'POST',
-      mode: 'cors', // CORS es necesario para que JS lea la respuesta
-      cache: 'no-cache',
+      redirect: 'follow', // IMPORTANTE: Obliga al navegador a seguir la redirección
       headers: {
-        'Content-Type': 'text/plain;charset=utf-8', // Apps Script prefiere texto plano
+        "Content-Type": "text/plain;charset=utf-8" // IMPORTANTE: Evita bloqueo
       },
-      body: JSON.stringify(data) // Convertir el objeto de datos a un string JSON
+      body: JSON.stringify(data)
     })
-      .then(response => response.json()) // Espera una respuesta JSON del script
+      .then(response => {
+        if (!response.ok) {
+           throw new Error("Respuesta no válida del servidor");
+        }
+        return response.json();
+      })
       .then(res => {
-
         if (res.result === "success") {
-          // ¡Éxito!
-          alert("¡Gracias por tu solicitud! Hemos recibido tu confirmación por correo.");
-          form.reset();
-          form.querySelectorAll(".form-group.error").forEach(group => {
-            group.classList.remove("error");
+          showToast({
+            type: "success",
+            title: "¡Solicitud enviada!",
+            message: "Hemos recibido tu cotización. Te contactaremos a la brevedad por correo o teléfono.",
+            duration: 7000
           });
-
-          // Limpia los bordes verdes de éxito al resetear
-          form.querySelectorAll(".form-group.success").forEach(group => {
-            group.classList.remove("success");
+          form.reset();
+          if (tsField) tsField.value = Date.now();
+          
+          form.querySelectorAll(".form-group.error, .form-group.success").forEach(group => {
+            group.classList.remove("error", "success");
           });
 
         } else {
-          // Error reportado por el script de Google
           console.error('Error del script:', res.message);
-          alert("Hubo un error al enviar tu solicitud. (Error de script). Por favor, inténtalo de nuevo.");
+          showToast({
+            type: "error",
+            title: "No pudimos procesar tu solicitud",
+            message: res.message || "Inténtalo de nuevo en unos momentos o contáctanos por WhatsApp.",
+            duration: 7000
+          });
         }
       })
       .catch(error => {
-        // Error de red o del 'fetch'
         console.error('Error de Fetch:', error);
-        alert("Hubo un error de conexión. Por favor, revisa tu internet e inténtalo de nuevo.");
+        showToast({
+          type: "error",
+          title: "Error de conexión",
+          message: "Revisa tu internet e inténtalo de nuevo. Si el problema persiste, escríbenos por WhatsApp.",
+          duration: 7000
+        });
       })
       .finally(() => {
-        // Restaurar el botón en cualquier caso
         submitButton.disabled = false;
         submitButton.innerHTML = originalButtonText;
       });
-    // --- ¡FIN DEL CÓDIGO DE ENVÍO A GOOGLE! ---
   });
-} // Fin de if(quoteForm)
+}
 
 // ===================================
 // SMOOTH SCROLLING
@@ -209,47 +285,69 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault();
     let targetId = this.getAttribute("href");
-
-    // Si el href es solo "#", apunta a la parte superior
     let target = (targetId === "#") ? document.documentElement : document.querySelector(targetId);
 
     if (target) {
-      // Corrección especial para #cotizar que apunta a #inicio
       if (targetId === "#inicio" || targetId === "#cotizar") {
         target = document.querySelector("#inicio");
       }
-
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-
-      // Cerrar menú móvil si está abierto
       document.body.classList.remove("nav-open");
     }
   });
 });
 
 // ===================================
-// INICIALIZACIÓN DEL MAPA
+// INICIALIZACIÓN DEL MAPA (LAZY LOAD)
 // ===================================
 
-// Solo ejecutar si existe el div del mapa
-if (document.getElementById("map")) {
-  // Vista predeterminada
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === "true") return resolve();
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", reject);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = () => {
+      script.dataset.loaded = "true";
+      resolve();
+    };
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+function loadStylesheet(href) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`link[href="${href}"]`)) return resolve();
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    link.onload = () => resolve();
+    link.onerror = reject;
+    document.head.appendChild(link);
+  });
+}
+
+function initMap() {
   const defaultView = {
     coords: [19.4326, -99.1332],
     zoom: 6,
   };
 
-  // Inicializar mapa con scroll desactivado
   const map = L.map("map", {
     scrollWheelZoom: false,
   }).setView(defaultView.coords, defaultView.zoom);
 
-  // Añadir capa de mapa
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap contributors",
   }).addTo(map);
 
-  // Activar zoom con Ctrl + Scroll
   document.addEventListener("keydown", function (e) {
     if (e.key === "Control" || e.metaKey) {
       map.scrollWheelZoom.enable();
@@ -266,7 +364,6 @@ if (document.getElementById("map")) {
     map.scrollWheelZoom.disable();
   });
 
-  // Botón de resetear vista
   const ResetViewControl = L.Control.extend({
     options: {
       position: "topleft",
@@ -293,13 +390,11 @@ if (document.getElementById("map")) {
 
   map.addControl(new ResetViewControl());
 
-  // Marcador principal (CDMX)
   const cdmxMarker = L.marker([19.4326, -99.1332]).addTo(map);
   cdmxMarker
     .bindPopup("<b>Mudanzas JV</b><br>Ciudad de México, México")
     .openPopup();
 
-  // Círculo de cobertura
   const coverageCircle = L.circle([19.4326, -99.1332], {
     color: "#FFD20A",
     fillColor: "#FFD20A",
@@ -307,7 +402,6 @@ if (document.getElementById("map")) {
     radius: 300000,
   }).addTo(map);
 
-  // Ciudades principales
   const cities = [
     { name: "Guadalajara", coords: [20.6597, -103.3496] },
     { name: "Monterrey", coords: [25.6866, -100.3161] },
@@ -325,7 +419,32 @@ if (document.getElementById("map")) {
     const marker = L.marker(city.coords).addTo(map);
     marker.bindPopup(`<b>${city.name}</b><br>Servicio disponible`);
   });
-} // Fin de if(map)
+}
+
+function loadLeafletAndInit() {
+  Promise.all([
+    loadStylesheet("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"),
+    loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+  ])
+    .then(() => initMap())
+    .catch(err => {
+      console.error("Error cargando Leaflet:", err);
+    });
+}
+
+const mapElement = document.getElementById("map");
+if (mapElement) {
+  const mapObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        loadLeafletAndInit();
+        observer.unobserve(entry.target); 
+      }
+    });
+  }, { rootMargin: "200px" });
+
+  mapObserver.observe(mapElement);
+} 
 
 // ===================================
 // MENÚ MÓVIL
@@ -340,7 +459,6 @@ if (mobileMenuBtn && nav && body) {
     body.classList.toggle("nav-open");
   });
 
-  // Cerrar menú al hacer clic fuera
   document.addEventListener("click", function (e) {
     if (body.classList.contains("nav-open") &&
       !nav.contains(e.target) &&
@@ -349,13 +467,12 @@ if (mobileMenuBtn && nav && body) {
     }
   });
 
-  // Cerrar menú con tecla Escape
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape" && body.classList.contains("nav-open")) {
       body.classList.remove("nav-open");
     }
   });
-} // Fin de if(menu)
+} 
 
 // ===================================
 // BURBUJA DE WHATSAPP
@@ -372,13 +489,12 @@ if (whatsappBubble) {
       whatsappBubble.classList.remove("show");
     }
   });
-} // Fin de if(whatsappBubble)
+} 
 
 // ===================================
-// ANIMACIONES AL HACER SCROLL (CORREGIDO)
+// ANIMACIONES AL HACER SCROLL
 // ===================================
 
-// Observador de intersección para animaciones
 const observerOptions = {
   threshold: 0.1,
   rootMargin: "0px 0px -50px 0px"
@@ -387,15 +503,12 @@ const observerOptions = {
 const observer = new IntersectionObserver(function (entries, observerInstance) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      // 1. Añade la clase 'is-visible' que está en el CSS
       entry.target.classList.add("is-visible");
-      // 2. Deja de observar el elemento (para que no se repita la animación)
       observerInstance.unobserve(entry.target);
     }
   });
 }, observerOptions);
 
-// Observar elementos que queremos animar
 document.querySelectorAll(
   ".service-card, .process-step, .testimonial-card, .trust-item"
 ).forEach(el => {
@@ -407,10 +520,8 @@ document.querySelectorAll(
 // MEJORAS DE ACCESIBILIDAD
 // ===================================
 
-// Mejorar navegación por teclado
 document.querySelectorAll('a, button, input, select, textarea').forEach(element => {
   element.addEventListener('focus', function () {
-    // Usamos el estilo 'outline' que es el estándar para accesibilidad
     this.style.outline = '3px solid var(--primary-yellow)';
     this.style.outlineOffset = '2px';
   });
@@ -421,7 +532,6 @@ document.querySelectorAll('a, button, input, select, textarea').forEach(element 
   });
 });
 
-// Anunciar cambios para lectores de pantalla
 function announceToScreenReader(message) {
   const announcement = document.createElement('div');
   announcement.setAttribute('role', 'status');
@@ -435,7 +545,6 @@ function announceToScreenReader(message) {
   }, 1000);
 }
 
-// Añadir estilos para elementos solo para lectores de pantalla
 const style = document.createElement('style');
 style.textContent = `
   .sr-only {
@@ -453,21 +562,23 @@ style.textContent = `
 document.head.appendChild(style);
 
 // ===================================
-// CÓDIGO AL CARGAR EL DOM (FUSIONADO Y CORREGIDO)
-// (Calendario, Formato Teléfono, Animación H1)
+// CÓDIGO AL CARGAR EL DOM
 // ===================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  // --- LÓGICA DEL CALENDARIO ---
+  const tsField = document.getElementById("hp_ts");
+  if (tsField) {
+    tsField.value = Date.now();
+  }
+
   const fechaInput = document.getElementById("form_fecha");
   if (fechaInput) {
     const hoy = new Date();
     const anio = hoy.getFullYear();
-    let mes = hoy.getMonth() + 1; // getMonth() es 0-11
+    let mes = hoy.getMonth() + 1; 
     let dia = hoy.getDate();
 
-    // Formato YYYY-MM-DD
     if (mes < 10) mes = "0" + mes;
     if (dia < 10) dia = "0" + dia;
 
@@ -475,32 +586,21 @@ document.addEventListener("DOMContentLoaded", function () {
     fechaInput.setAttribute("min", fechaMinima);
   }
 
-  // --- LÓGICA DE FORMATEAR TELÉFONO (CORREGIDA) ---
   const telefonoInput = document.getElementById("form_telefono");
   if (telefonoInput) {
     telefonoInput.addEventListener("input", function (e) {
-      // 1. Obtener solo dígitos y limitar a 10
       const digits = e.target.value.replace(/\D/g, "").slice(0, 10);
-
-      // 2. Aplicar el formato XX XXXX XXXX
       let formattedValue = digits;
       if (digits.length > 6) {
-        // Formato: 55 3669 6176
         formattedValue = `${digits.slice(0, 2)} ${digits.slice(2, 6)} ${digits.slice(6)}`;
       } else if (digits.length > 2) {
-        // Formato: 55 3669
         formattedValue = `${digits.slice(0, 2)} ${digits.slice(2)}`;
       }
-
-      // 3. Asignar el valor formateado de nuevo al campo
       e.target.value = formattedValue;
-
-      // 4. ¡¡LÍNEA NUEVA!! VALIDAR EN TIEMPO REAL
       validateField(e.target);
     });
   }
 
-  // --- LÓGICA DE ANIMACIÓN DEL H1 ---
   const wordData = [
     { article: "el", word: "cuidado" },
     { article: "la", word: "dedicación" },
@@ -513,7 +613,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const articleSpan = document.getElementById("animated-article");
   const wordSpan = document.getElementById("animated-word");
 
-  // Revisa que los elementos existan
   if (articleSpan && wordSpan) {
     let currentIndex = 0;
 
@@ -530,10 +629,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         articleSpan.classList.remove("is-changing");
         wordSpan.classList.remove("is-changing");
-      }, 400); // 400ms debe coincidir con la transición de CSS
+      }, 400); 
     }
 
-    // Inicia el ciclo
-    setInterval(changeWord, 3000); // Cambia cada 3 segundos
+    setInterval(changeWord, 3000); 
   }
 });

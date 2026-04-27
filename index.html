@@ -6,16 +6,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description"
         content="Mudanzas JV - Servicio profesional de mudanzas locales y foráneas en Ciudad de México. 15+ años de experiencia. Cotización gratuita." />
+    <meta name="theme-color" content="#ffd20a" />
     <title>Mudanzas JV - Servicio de Mudanzas en Ciudad de México</title>
+
+    <!-- Canonical: cambia esta URL a tu dominio definitivo cuando se publique -->
+    <link rel="canonical" href="https://mudanzasjv.com/" />
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content="Mudanzas JV" />
+    <meta property="og:title" content="Mudanzas JV - Servicio de Mudanzas en Ciudad de México" />
+    <meta property="og:description" content="Servicio profesional de mudanzas locales y foráneas. 15+ años de experiencia. Cotización gratuita." />
+    <meta property="og:url" content="https://mudanzasjv.com/" />
+    <meta property="og:image" content="https://mudanzasjv.com/assets/logo/Logo_JV-removebg-preview.png" />
+    <meta property="og:image:alt" content="Mudanzas JV - Mudanzas profesionales en CDMX" />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mudanzas JV - Mudanzas en CDMX" />
+    <meta name="twitter:description" content="Servicio profesional de mudanzas locales y foráneas. 15+ años de experiencia." />
+    <meta name="twitter:image" content="https://mudanzasjv.com/assets/logo/Logo_JV-removebg-preview.png" />
+
     <link rel="icon" href="./assets/logo/Logo_JV-removebg-preview.png" type="image/x-icon" />
+
+    <!-- Webfont: Inter (preconnect mejora la velocidad de carga de la fuente) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="./css/mystyle.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet (CSS y JS) se cargan dinámicamente desde JS cuando el mapa entra en pantalla -->
+
+    <!-- JSON-LD: Datos estructurados para Google (rich snippets) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MovingCompany",
+      "name": "Mudanzas JV",
+      "description": "Servicio profesional de mudanzas locales y foráneas en Ciudad de México con más de 15 años de experiencia.",
+      "url": "https://mudanzasjv.com/",
+      "logo": "https://mudanzasjv.com/assets/logo/Logo_JV-removebg-preview.png",
+      "telephone": "+52-55-1142-5796",
+      "email": "fletesymudanzasjv1@gmail.com",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ciudad de México",
+        "addressRegion": "CDMX",
+        "addressCountry": "MX"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Ciudad de México" },
+        { "@type": "State", "name": "Estado de México" },
+        { "@type": "Country", "name": "México" }
+      ],
+      "sameAs": [
+        "https://wa.me/525511425796",
+        "https://share.google/l53wBb38IyKL9d1dR"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "112",
+        "bestRating": "5"
+      }
+    }
+    </script>
 </head>
 
 <body>
-    <a href="https://wa.me/5511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-bubble"
+    <!-- Contenedor de notificaciones toast (accesible para lectores de pantalla) -->
+    <div id="toast-container" class="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <a href="https://wa.me/525511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-bubble"
         id="whatsapp-bubble" aria-label="Contactar por WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
@@ -33,7 +98,7 @@
                 </span>
             </div>
             <div>
-                <a href="https://wa.me/5511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
+                <a href="https://wa.me/525511425796" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
                     <i class="fab fa-whatsapp"></i> Cotiza por WhatsApp
                 </a>
             </div>
@@ -107,6 +172,14 @@
                 </p>
 
                 <form id="quoteForm" novalidate>
+                    <!-- Anti-spam: honeypot. Los bots llenan TODOS los campos, los humanos no ven este. -->
+                    <div aria-hidden="true" style="position:absolute !important; left:-9999px !important; top:-9999px !important; width:1px !important; height:1px !important; overflow:hidden !important; opacity:0 !important; pointer-events:none !important;">
+                        <label for="hp_website">Sitio web (no llenar)</label>
+                        <input type="text" id="hp_website" name="hp_website" tabindex="-1" autocomplete="off" />
+                    </div>
+                    <!-- Anti-spam: timestamp para detectar envíos automatizados -->
+                    <input type="hidden" id="hp_ts" name="hp_ts" />
+
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label for="form_nombre" class="required">Nombre</label>
@@ -254,7 +327,7 @@
             <div class="services-grid">
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/residential.png" alt="residencial">
+                        <img src="./assets/img/residential.png" alt="residencial" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Mudanzas Residenciales</h3>
@@ -268,7 +341,7 @@
 
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/office.png" alt="office">
+                        <img src="./assets/img/office.png" alt="office" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Mudanzas de Oficina</h3>
@@ -281,7 +354,7 @@
 
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/packaking.png" alt="packing">
+                        <img src="./assets/img/packaking.png" alt="packing" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Empaque Profesional</h3>
@@ -293,7 +366,7 @@
 
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/foraneo.png" alt="foraneo">
+                        <img src="./assets/img/foraneo.png" alt="foraneo" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Mudanzas Foráneas</h3>
@@ -306,7 +379,7 @@
 
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/especiales.png" alt="maniobras">
+                        <img src="./assets/img/especiales.png" alt="maniobras" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Maniobras especiales</h3>
@@ -319,7 +392,7 @@
 
                 <div class="service-card">
                     <div class="service-card-image">
-                        <img src="./assets/img/volados.png" alt="maniobras">
+                        <img src="./assets/img/volados.png" alt="volados" loading="lazy" decoding="async">
                     </div>
                     <div class="service-card-content">
                         <h3>Volados profesionales</h3>
@@ -433,7 +506,7 @@
                     </div>
                 </div>
                 <div class="about-image">
-                    <img src="./assets/img/our_team.png" alt="Equipo de Mudanzas JV trabajando profesionalmente" />
+                    <img src="./assets/img/our_team.png" alt="Equipo de Mudanzas JV trabajando profesionalmente" loading="lazy" decoding="async" />
                 </div>
             </div>
         </div>
@@ -447,7 +520,7 @@
                 nacional
             </p>
 
-            <div id="map"></div>
+            <div id="map"><span><i class="fas fa-map-marked-alt"></i> Cargando mapa...</span></div>
 
             <div class="coverage-info">
                 <h3>Destinos Principales</h3>
@@ -475,14 +548,50 @@
 
     <section id="testimonios">
         <div class="container">
-            <h2 class="section-title">Testimonios</h2>
+            <h2 class="section-title">Lo que dicen nuestros clientes</h2>
             <p class="section-subtitle">
-                Lo que nuestros clientes dicen sobre nosotros
+                Más de 100 familias y empresas han confiado en nosotros
             </p>
+
+            <!-- Barra de credibilidad con rating de Google -->
+            <div class="google-rating-bar">
+                <div class="google-rating-content">
+                    <div class="google-logo" aria-hidden="true">
+                        <span class="g-blue">G</span><span class="g-red">o</span><span class="g-yellow">o</span><span class="g-blue">g</span><span class="g-green">l</span><span class="g-red">e</span>
+                    </div>
+                    <div class="google-rating-info">
+                        <div class="google-rating-stars">
+                            <span class="google-rating-number">4.9</span>
+                            <span class="stars" aria-label="4.9 de 5 estrellas">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </span>
+                        </div>
+                        <p class="google-rating-count">Calificación basada en <strong>112 reseñas</strong></p>
+                    </div>
+                </div>
+                <a href="https://share.google/l53wBb38IyKL9d1dR" target="_blank" rel="noopener noreferrer" class="google-rating-cta">
+                    <i class="fas fa-external-link-alt"></i>
+                    Ver todas las reseñas en Google
+                </a>
+            </div>
 
             <div class="testimonials-grid">
                 <div class="testimonial-card">
-                    <div class="stars">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" aria-hidden="true">S</div>
+                        <div class="testimonial-meta">
+                            <p class="testimonial-author">Silvia Osorno</p>
+                            <p class="testimonial-location">
+                                <i class="fab fa-google" aria-hidden="true"></i>
+                                Reseña verificada
+                            </p>
+                        </div>
+                    </div>
+                    <div class="stars" aria-label="5 estrellas">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -490,17 +599,25 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="testimonial-text">
-                        "Excelente servicio. Llegaron puntuales, fueron muy cuidadosos con
-                        mis muebles y no se rompióolutamente nada. El equipo fue muy
-                        profesional y amable en todo momento. Definitivamente los
-                        recomiendo."
+                        "Servicio altamente profesional y de calidad, cuidaron mis muebles
+                        muchísimo, los protegieron con telas gruesas y playo, desmontaron
+                        mis muebles empotrados, cargaron todo con un sistema de apoyo que
+                        propició que fueran muy rápidos. LO RECOMIENDO MUCHO."
                     </p>
-                    <p class="testimonial-author">María González</p>
-                    <p class="testimonial-location">Polanco, CDMX</p>
                 </div>
 
                 <div class="testimonial-card">
-                    <div class="stars">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" aria-hidden="true">L</div>
+                        <div class="testimonial-meta">
+                            <p class="testimonial-author">Loren Díaz</p>
+                            <p class="testimonial-location">
+                                <i class="fab fa-google" aria-hidden="true"></i>
+                                Reseña verificada
+                            </p>
+                        </div>
+                    </div>
+                    <div class="stars" aria-label="5 estrellas">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -508,16 +625,23 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="testimonial-text">
-                        "Contraté a Mudanzas JV para trasladar mi oficina y superaron
-                        todas mis expectativas. Terminaron en el tiempo acordado y todo
-                        llegó en perfecto estado. Muy profesionales."
+                        "Se los recomiendo demasiado, son súper profesionales. Te tratan
+                        las cosas con mucho cuidado y manejan excelentes precios."
                     </p>
-                    <p class="testimonial-author">Roberto Martínez</p>
-                    <p class="testimonial-location">Santa Fe, CDMX</p>
                 </div>
 
                 <div class="testimonial-card">
-                    <div class="stars">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar" aria-hidden="true">Y</div>
+                        <div class="testimonial-meta">
+                            <p class="testimonial-author">Yayo</p>
+                            <p class="testimonial-location">
+                                <i class="fab fa-google" aria-hidden="true"></i>
+                                Reseña verificada
+                            </p>
+                        </div>
+                    </div>
+                    <div class="stars" aria-label="5 estrellas">
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
                         <i class="fas fa-star"></i>
@@ -525,14 +649,21 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="testimonial-text">
-                        "Muy buen precio y excelente atención al cliente. Me ayudaron
-                        incluso a organizar y acomodar las cajas en mi nuevo departamento.
-                        Sin duda los volvería a contratar."
+                        "Los recomiendo muchísimo, me brindaron un excelente servicio,
+                        muy atentos. Me orientaron bastante bien y cuidaron de mis
+                        pertenencias en todo momento. Sin duda alguna los contrataré
+                        nuevamente."
                     </p>
-                    <p class="testimonial-author">Laura Sánchez</p>
-                    <p class="testimonial-location">Coyoacán, CDMX</p>
                 </div>
             </div>
+
+            <!-- CTA al final del grid -->
+            <p class="testimonials-footer">
+                ¿Quieres ver más opiniones?
+                <a href="https://share.google/l53wBb38IyKL9d1dR" target="_blank" rel="noopener noreferrer">
+                    Visita nuestro perfil de Google <i class="fas fa-arrow-right"></i>
+                </a>
+            </p>
         </div>
     </section>
 
@@ -557,7 +688,7 @@
                 <div class="social-icons">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                     <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://wa.me/5511425796" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://wa.me/525511425796" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
 
@@ -568,7 +699,7 @@
                     <li><i class="fas fa-phone"></i> <a href="tel:+525511425796">55-1142-5796</a></li>
                     <li><i class="fas fa-envelope"></i> <a
                             href="mailto:fletesymudanzasjv1@gmail.com">fletesymudanzasjv1@gmail.com</a></li>
-                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/5511425796">WhatsApp: 55-1142-5796</a>
+                    <li><i class="fab fa-whatsapp"></i> <a href="https://wa.me/525511425796">WhatsApp: 55-1142-5796</a>
                     </li>
                 </ul>
             </div>
