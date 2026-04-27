@@ -1,0 +1,8 @@
+# robots.txt - Mudanzas JV
+# Este archivo le dice a los buscadores qué pueden y qué no pueden indexar.
+
+User-agent: *
+Allow: /
+
+# Indica dónde está el sitemap
+Sitemap: https://mudanzasjv.com/sitemap.xml
