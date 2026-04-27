@@ -9,15 +9,6 @@
     <meta name="theme-color" content="#ffd20a" />
     <title>Mudanzas JV - Servicio de Mudanzas en Ciudad de México</title>
 
-    <!-- Google Analytics (GA4) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6GBZ2S2ELN"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-6GBZ2S2ELN');
-    </script>
-
     <!-- Canonical: cambia esta URL a tu dominio definitivo cuando se publique -->
     <link rel="canonical" href="https://mudanzasjv.com/" />
 
@@ -730,7 +721,7 @@
                     <li><a href="#cobertura">Áreas de Cobertura</a></li>
                     <li><a href="#testimonios">Testimonios</a></li>
                     <li><a href="#inicio">Cotizar</a></li>
-                    <li><a href="#">Aviso de Privacidad</a></li>
+                    <li><a href="#" id="open-privacy">Aviso de Privacidad</a></li>
                 </ul>
             </div>
         </div>
@@ -743,6 +734,117 @@
             </p>
         </div>
     </footer>
+
+    <!-- ===========================================
+         MODAL: Aviso de Privacidad
+         =========================================== -->
+    <div class="modal-overlay" id="privacy-modal" role="dialog" aria-modal="true" aria-labelledby="privacy-title" aria-hidden="true">
+        <div class="modal-card">
+            <button type="button" class="modal-close" id="close-privacy" aria-label="Cerrar aviso de privacidad">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+
+            <div class="modal-content">
+                <h2 id="privacy-title">Aviso de Privacidad</h2>
+                <p class="modal-date">Última actualización: abril 2026</p>
+
+                <h3>1. Identidad del responsable</h3>
+                <p>
+                    <strong>Mudanzas JV</strong> (en adelante "el Responsable"), con domicilio en
+                    Ciudad de México, México, y correo electrónico de contacto
+                    <a href="mailto:contacto.mudanzasjv@gmail.com">contacto.mudanzasjv@gmail.com</a>,
+                    es responsable del tratamiento, uso y protección de los datos personales que
+                    nos proporcionas a través de este sitio web, conforme a lo dispuesto en la
+                    <em>Ley Federal de Protección de Datos Personales en Posesión de los
+                    Particulares</em> (LFPDPPP) y su reglamento.
+                </p>
+
+                <h3>2. Datos personales que recopilamos</h3>
+                <p>Para brindarte nuestros servicios, recopilamos únicamente los siguientes datos:</p>
+                <ul>
+                    <li>Nombre completo</li>
+                    <li>Número de teléfono</li>
+                    <li>Correo electrónico</li>
+                    <li>Direcciones de origen y destino de la mudanza</li>
+                    <li>Detalles del servicio solicitado (fecha, piso, elevador, lista de bienes)</li>
+                </ul>
+                <p>
+                    <strong>No recopilamos datos sensibles</strong> (datos de salud, financieros,
+                    biométricos, religiosos, ni ideológicos).
+                </p>
+
+                <h3>3. Finalidades del tratamiento</h3>
+                <p>Los datos que nos proporcionas se utilizan exclusivamente para:</p>
+                <ul>
+                    <li>Elaborar y enviarte la cotización solicitada</li>
+                    <li>Contactarte para coordinar el servicio de mudanza</li>
+                    <li>Brindarte información sobre el estatus de tu servicio</li>
+                    <li>Llevar registro interno de los servicios prestados</li>
+                </ul>
+                <p>
+                    <strong>No utilizamos tus datos para fines publicitarios</strong>, ni para
+                    enviarte correos no solicitados, ni los compartimos con terceros con fines
+                    comerciales.
+                </p>
+
+                <h3>4. Transferencia de datos</h3>
+                <p>
+                    Tus datos se almacenan en servicios de Google (Google Sheets y Gmail) que
+                    cumplen con estándares internacionales de seguridad. No transferimos tus datos
+                    a terceros fuera de estos servicios técnicos esenciales para nuestra
+                    operación, salvo cuando sea legalmente requerido por una autoridad competente.
+                </p>
+
+                <h3>5. Derechos ARCO</h3>
+                <p>
+                    En cualquier momento tienes derecho a <strong>Acceder</strong> a tus datos,
+                    <strong>Rectificarlos</strong> si son inexactos, solicitar su
+                    <strong>Cancelación</strong> de nuestra base de datos, u
+                    <strong>Oponerte</strong> a su uso para finalidades específicas.
+                </p>
+                <p>
+                    Para ejercer cualquiera de estos derechos, envíanos un correo a
+                    <a href="mailto:contacto.mudanzasjv@gmail.com">contacto.mudanzasjv@gmail.com</a>
+                    con el asunto "Derechos ARCO" indicando tu nombre completo, el derecho que
+                    deseas ejercer y, en su caso, los datos a los que aplica. Daremos respuesta
+                    en un plazo máximo de 20 días hábiles.
+                </p>
+
+                <h3>6. Uso de cookies y tecnologías similares</h3>
+                <p>
+                    Este sitio utiliza Google Analytics para medir el tráfico y mejorar la
+                    experiencia de los visitantes. Esta herramienta puede instalar cookies en tu
+                    navegador con fines exclusivamente estadísticos (no publicitarios). Puedes
+                    deshabilitar las cookies en la configuración de tu navegador en cualquier
+                    momento.
+                </p>
+
+                <h3>7. Conservación de los datos</h3>
+                <p>
+                    Conservamos tus datos por el tiempo estrictamente necesario para prestarte el
+                    servicio y cumplir con obligaciones fiscales y legales aplicables. Una vez
+                    concluido ese plazo, los datos son eliminados de manera segura.
+                </p>
+
+                <h3>8. Cambios al aviso de privacidad</h3>
+                <p>
+                    Nos reservamos el derecho de actualizar este aviso en cualquier momento. Las
+                    actualizaciones se publicarán en esta misma página y la fecha de última
+                    modificación será actualizada. Te recomendamos revisarla periódicamente.
+                </p>
+
+                <h3>9. Contacto</h3>
+                <p>
+                    Si tienes dudas sobre este aviso o el manejo de tus datos personales, escríbenos:
+                </p>
+                <ul>
+                    <li><strong>Correo:</strong> <a href="mailto:contacto.mudanzasjv@gmail.com">contacto.mudanzasjv@gmail.com</a></li>
+                    <li><strong>Teléfono:</strong> <a href="tel:+525511425796">55-1142-5796</a></li>
+                    <li><strong>WhatsApp:</strong> <a href="https://wa.me/525511425796" target="_blank" rel="noopener">55-1142-5796</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
     <script src="./js/myscript.js"></script>
 </body>

@@ -1645,3 +1645,183 @@ legend {
   white-space: nowrap;
   border-width: 0;
 }
+
+/* ============================================
+   MODAL: Aviso de Privacidad
+   ============================================ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: var(--white);
+  border-radius: 16px;
+  max-width: 760px;
+  width: 100%;
+  max-height: 88vh;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95) translateY(20px);
+  transition: transform 0.3s ease;
+  border-top: 5px solid var(--primary-yellow);
+}
+
+.modal-overlay.show .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--light-gray);
+  color: var(--dark-gray);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.modal-close:hover {
+  background: var(--secondary-red);
+  color: var(--white);
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: 40px 50px 35px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--medium-gray) transparent;
+}
+
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--medium-gray);
+  border-radius: 4px;
+}
+
+.modal-content h2 {
+  font-size: 28px;
+  color: var(--dark-gray);
+  margin: 0 0 6px 0;
+  padding-right: 40px;
+}
+
+.modal-content .modal-date {
+  font-size: 13px;
+  color: var(--medium-gray);
+  margin: 0 0 24px 0;
+  font-style: italic;
+}
+
+.modal-content h3 {
+  font-size: 17px;
+  color: var(--dark-gray);
+  margin: 24px 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--primary-yellow);
+  display: inline-block;
+}
+
+.modal-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4a4a4a;
+  margin: 0 0 12px 0;
+}
+
+.modal-content ul {
+  margin: 8px 0 14px 24px;
+  padding: 0;
+}
+
+.modal-content ul li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #4a4a4a;
+  margin-bottom: 4px;
+}
+
+.modal-content a {
+  color: var(--secondary-red);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.modal-content a:hover {
+  text-decoration: underline;
+}
+
+.modal-content strong {
+  color: var(--dark-gray);
+  font-weight: 600;
+}
+
+.modal-content em {
+  color: var(--medium-gray);
+}
+
+/* Bloquear scroll del body cuando el modal está abierto */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .modal-overlay {
+    padding: 0;
+  }
+
+  .modal-card {
+    max-height: 100vh;
+    border-radius: 0;
+    border-top-width: 4px;
+  }
+
+  .modal-content {
+    padding: 32px 24px 28px;
+  }
+
+  .modal-content h2 {
+    font-size: 24px;
+  }
+
+  .modal-content h3 {
+    font-size: 16px;
+  }
+}
