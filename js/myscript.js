@@ -196,7 +196,7 @@ if (quoteForm) {
     };
 
     // TU URL ACTUALIZADA
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyWKN6QYC5WxjN1SYV8PjLxXve8p9B1KCLGcDAeOUL4mOwhAM_q8aj17iDLa8Sgp73KCg/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwk3F-OhxGDU5qYjX-EjexpPq3YvVd093Wyq10_r2ayuWz3jqxRAChU3rrzyUd1aDfM8A/exec';
 
     // CONFIGURACIÓN ESTRICTA ANTI-CORS
     fetch(scriptURL, {
@@ -219,6 +219,13 @@ if (quoteForm) {
         try {
           const res = JSON.parse(text);
           if (res.result === "success") {
+            // Tracking en Google Analytics
+            if (typeof gtag === 'function') {
+              gtag('event', 'form_submit_success', {
+                'event_category': 'Cotización',
+                'event_label': 'Formulario enviado exitosamente'
+              });
+            }
             showToast({
               type: "success",
               title: "¡Solicitud enviada!",
@@ -232,6 +239,13 @@ if (quoteForm) {
             });
           } else {
             console.error('Error lógico:', res.message);
+            // Tracking del error
+            if (typeof gtag === 'function') {
+              gtag('event', 'form_submit_error', {
+                'event_category': 'Cotización',
+                'event_label': res.message || 'Error desconocido'
+              });
+            }
             showToast({
               type: "error",
               title: "No pudimos procesar tu solicitud",
@@ -246,6 +260,13 @@ if (quoteForm) {
       })
       .catch(error => {
         console.error('Error de Fetch:', error);
+        // Tracking del error de red
+        if (typeof gtag === 'function') {
+          gtag('event', 'form_submit_error', {
+            'event_category': 'Cotización',
+            'event_label': 'Error de conexión'
+          });
+        }
         showToast({
           type: "error",
           title: "Error de conexión",
@@ -491,6 +512,64 @@ document.head.appendChild(style);
 document.addEventListener("DOMContentLoaded", function () {
   const tsField = document.getElementById("hp_ts");
   if (tsField) { tsField.value = Date.now(); }
+
+  // ===================================
+  // GOOGLE ANALYTICS - Eventos personalizados
+  // ===================================
+
+  function trackEvent(eventName, category, label) {
+    if (typeof gtag === 'function') {
+      gtag('event', eventName, {
+        'event_category': category,
+        'event_label': label
+      });
+    }
+  }
+
+  // 1. Clics en cualquier enlace de WhatsApp
+  document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
+    link.addEventListener('click', function () {
+      const ubicacion = this.classList.contains('whatsapp-bubble')
+        ? 'Botón flotante'
+        : (this.closest('header') ? 'Header'
+          : (this.closest('footer') ? 'Footer'
+            : (this.closest('.top-bar') ? 'Top bar' : 'Cuerpo')));
+      trackEvent('whatsapp_click', 'Contacto', ubicacion);
+    });
+  });
+
+  // 2. Clics en enlaces a las reseñas de Google
+  document.querySelectorAll('a[href*="share.google"], a[href*="google.com/maps"]').forEach(link => {
+    link.addEventListener('click', function () {
+      trackEvent('google_reviews_click', 'Reseñas', 'Click en ver reseñas Google');
+    });
+  });
+
+  // 3. Clics en correos (mailto)
+  document.querySelectorAll('a[href^="mailto:"]').forEach(link => {
+    link.addEventListener('click', function () {
+      trackEvent('email_click', 'Contacto', 'Click en correo');
+    });
+  });
+
+  // 4. Clics en teléfonos (tel:)
+  document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+    link.addEventListener('click', function () {
+      trackEvent('phone_click', 'Contacto', 'Click en teléfono');
+    });
+  });
+
+  // 5. Scroll: medir cuántas personas llegan al 75% del sitio
+  let scrolled75 = false;
+  window.addEventListener('scroll', function () {
+    if (scrolled75) return;
+    const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100;
+    if (scrollPercent >= 75) {
+      scrolled75 = true;
+      trackEvent('scroll_75_percent', 'Engagement', 'Usuario leyó el 75% del sitio');
+    }
+  }, { passive: true });
+
 
   const fechaInput = document.getElementById("form_fecha");
   if (fechaInput) {
