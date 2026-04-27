@@ -196,7 +196,7 @@ if (quoteForm) {
     };
 
     // TU URL ACTUALIZADA
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxr5cynj0QOvFYVT8Z8KktaAtsaa7lCME-fk-Nt5xo_hR6S2FiVhXjXIGV3ZnEQp6Xb_g/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyWKN6QYC5WxjN1SYV8PjLxXve8p9B1KCLGcDAeOUL4mOwhAM_q8aj17iDLa8Sgp73KCg/exec';
 
     // CONFIGURACIÓN ESTRICTA ANTI-CORS
     fetch(scriptURL, {
